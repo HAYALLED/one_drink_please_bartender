@@ -53,8 +53,8 @@ func has_language(code: String) -> bool:
 
 
 func native_name(code: String) -> String:
-	var name := _lookup(code, "lang_name")
-	return code if name.is_empty() else name
+	var native := _lookup(code, "lang_name")
+	return code if native.is_empty() else native
 
 
 func default_language() -> String:

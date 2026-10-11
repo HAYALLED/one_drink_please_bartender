@@ -12,16 +12,17 @@ func apply(appearance: NpcAppearance) -> void:
 		child.queue_free()
 	if appearance == null:
 		return
-	for part in NpcLibrary.part_names():
+	for part in NpcLibrary.part_names(appearance.kind):
 		var file := appearance.part_file(part)
 		if file.is_empty():
 			continue
-		var texture := NpcLibrary.texture(part, file)
+		var texture := NpcLibrary.texture(part, file, appearance.kind)
 		if texture == null:
 			continue
 		var sprite := Sprite2D.new()
 		sprite.name = part
 		sprite.texture = texture
+		sprite.flip_h = NpcLibrary.is_mirror(part)
 		sprite.modulate = _tint(part, appearance)
 		_layers.add_child(sprite)
 

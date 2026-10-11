@@ -8,6 +8,10 @@ const SLOT_CARD_SCENE: PackedScene = preload("res://scenes/menus/slot_card.tscn"
 @onready var _settings_button: NinePatchButton = $MainBox/SettingsButton
 @onready var _debug_button: NinePatchButton = $MainBox/DebugButton
 @onready var _quit_button: NinePatchButton = $MainBox/QuitButton
+@onready var _debug_box: VBoxContainer = $DebugBox
+@onready var _debug_player_button: NinePatchButton = $DebugBox/PlayerButton
+@onready var _debug_npc_button: NinePatchButton = $DebugBox/NpcButton
+@onready var _debug_back_button: NinePatchButton = $DebugBox/DebugBackButton
 @onready var _slots_panel: NinePatchRect = $SlotsPanel
 @onready var _slots_row: HBoxContainer = $SlotsPanel/Margin/Content/SlotsRow
 @onready var _slots_back: NinePatchButton = $SlotsPanel/Margin/Content/SlotsBack
@@ -19,7 +23,10 @@ func _ready() -> void:
 	_play_button.pressed.connect(_show_slots)
 	_settings_button.pressed.connect(_show_settings)
 	_debug_button.visible = OS.is_debug_build()
-	_debug_button.pressed.connect(_show_npc_creator)
+	_debug_button.pressed.connect(_show_debug_box)
+	_debug_player_button.pressed.connect(_show_creator.bind(NpcLibrary.KIND_PLAYER))
+	_debug_npc_button.pressed.connect(_show_creator.bind(NpcLibrary.KIND_NPC))
+	_debug_back_button.pressed.connect(_hide_debug_box)
 	_quit_button.pressed.connect(_on_quit_pressed)
 	_slots_back.pressed.connect(_hide_slots)
 	_settings_menu.closed.connect(_on_settings_closed)
@@ -32,6 +39,8 @@ func _unhandled_input(event: InputEvent) -> void:
 		return
 	if _npc_creator.visible:
 		_npc_creator.close()
+	elif _debug_box.visible:
+		_hide_debug_box()
 	elif _settings_menu.visible:
 		_settings_menu.close()
 	elif _slots_panel.visible:
@@ -55,12 +64,22 @@ func _on_settings_closed() -> void:
 
 
 func _on_npc_creator_closed() -> void:
+	_debug_box.visible = true
+
+
+func _show_debug_box() -> void:
+	_main_box.visible = false
+	_debug_box.visible = true
+
+
+func _hide_debug_box() -> void:
+	_debug_box.visible = false
 	_main_box.visible = true
 
 
-func _show_npc_creator() -> void:
-	_main_box.visible = false
-	_npc_creator.open()
+func _show_creator(kind: StringName) -> void:
+	_debug_box.visible = false
+	_npc_creator.open(kind)
 
 
 func _show_settings() -> void:

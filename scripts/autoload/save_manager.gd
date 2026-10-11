@@ -145,4 +145,4 @@ func format_timestamp(unix: int) -> String:
 
 func format_playtime(seconds: float) -> String:
 	var total := int(seconds)
-	return Loc.t("playtime_fmt", {"h": total / 3600, "m": (total % 3600) / 60})
+	return Loc.t("playtime_fmt", {"h": floori(total / 3600.0), "m": floori((total % 3600) / 60.0)})

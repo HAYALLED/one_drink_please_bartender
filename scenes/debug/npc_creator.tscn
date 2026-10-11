@@ -53,6 +53,7 @@ theme_override_constants/separation = 8
 
 [node name="Title" type="Label" parent="Frame/Margin/Content" unique_id=244449403]
 layout_mode = 2
+text = "npc_creator_title"
 horizontal_alignment = 1
 script = ExtResource("4_loclabel")
 text_key = "npc_creator_title"
@@ -102,6 +103,7 @@ layout_mode = 2
 [node name="GenderLabel" type="Label" parent="Frame/Margin/Content/Body/Controls/GenderRow" unique_id=1121752267]
 custom_minimum_size = Vector2(90, 0)
 layout_mode = 2
+text = "npc_gender"
 script = ExtResource("4_loclabel")
 text_key = "npc_gender"
 
@@ -115,6 +117,7 @@ layout_mode = 2
 [node name="SkinLabel" type="Label" parent="Frame/Margin/Content/Body/Controls/SkinRow" unique_id=1426637933]
 custom_minimum_size = Vector2(90, 0)
 layout_mode = 2
+text = "npc_skin"
 script = ExtResource("4_loclabel")
 text_key = "npc_skin"
 
@@ -130,6 +133,7 @@ layout_mode = 2
 [node name="HairLabel" type="Label" parent="Frame/Margin/Content/Body/Controls/HairRow" unique_id=1554201311]
 custom_minimum_size = Vector2(90, 0)
 layout_mode = 2
+text = "npc_hair"
 script = ExtResource("4_loclabel")
 text_key = "npc_hair"
 
@@ -157,16 +161,27 @@ theme_override_constants/separation = 8
 custom_minimum_size = Vector2(0, 24)
 layout_mode = 2
 size_flags_horizontal = 3
+text = "npc_randomize"
 text_key = "npc_randomize"
 
 [node name="RescanButton" parent="Frame/Margin/Content/Buttons" unique_id=278767471 instance=ExtResource("5_button")]
 custom_minimum_size = Vector2(0, 24)
 layout_mode = 2
 size_flags_horizontal = 3
+text = "npc_rescan"
 text_key = "npc_rescan"
+
+[node name="SaveButton" parent="Frame/Margin/Content/Buttons" instance=ExtResource("5_button")]
+visible = false
+custom_minimum_size = Vector2(0, 24)
+layout_mode = 2
+size_flags_horizontal = 3
+text = "player_save"
+text_key = "player_save"
 
 [node name="BackButton" parent="Frame/Margin/Content/Buttons" unique_id=1918915508 instance=ExtResource("5_button")]
 custom_minimum_size = Vector2(0, 24)
 layout_mode = 2
 size_flags_horizontal = 3
+text = "menu_back"
 text_key = "menu_back"

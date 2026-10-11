@@ -5,6 +5,7 @@ extends RefCounted
 ## Forced looks (critical characters): pass overrides, e.g.
 ##   NpcGenerator.generate({"gender": &"female", "parts": {"hat": "", "head": "head_03.png"}, "skin_color": Color.WHITE})
 ## Parts that are not forced are still rolled randomly.
+## "kind" (&"npc" default, or &"player") picks the art folder.
 
 const MAX_UNIQUE_TRIES := 32
 const GENDER_WEIGHTS := {"male": 1.0, "female": 1.0, "other": 0.25}
@@ -30,12 +31,15 @@ const SPAWN_CHANCE := {
 	"mustache": {"male": 0.3, "female": 0.0, "other": 0.1},
 	"beard": {"male": 0.25, "female": 0.0, "other": 0.1},
 }
-const CORE_PARTS: PackedStringArray = ["body", "hands", "ears", "cloths", "head", "nose", "mouth", "eyes", "eyebrows"]
+const CORE_PARTS: PackedStringArray = ["body", "hands", "ears", "cloths", "head", "nose", "mouth", "eye_1", "eye_2", "eyebrows"]
+## Chance that eye_2 gets its own image instead of mirroring eye_1 (odd expressions like a wink). 0 = always mirrored.
+const ODD_EYES_CHANCE := 0.0
 const EXTRA_CHANCE := 0.5
 const MUSTACHE_WITH_BEARD_CHANCE := 0.6
 
 
-## overrides keys (all optional): "gender" (StringName), "parts" (Dictionary), "skin_color", "hair_color".
+## overrides keys (all optional): "kind" (StringName), "gender" (StringName), "parts" (Dictionary),
+## "skin_color", "hair_color", "mirror_eyes" (bool).
 ## avoid: signatures (NpcAppearance.signature()) of NPCs already in the bar; a different combination is preferred.
 static func generate(
 	overrides: Dictionary = {},
@@ -46,10 +50,12 @@ static func generate(
 		rng = RandomNumberGenerator.new()
 		rng.randomize()
 	var result := NpcAppearance.new()
-	result.gender = StringName(overrides["gender"]) if overrides.has("gender") else _roll_gender(rng)
+	result.kind = StringName(overrides.get("kind", NpcLibrary.KIND_NPC))
+	result.gender = StringName(overrides["gender"]) if overrides.has("gender") else _roll_gender(rng, result.kind)
+	result.mirror_eyes = bool(overrides["mirror_eyes"]) if overrides.has("mirror_eyes") else rng.randf() >= ODD_EYES_CHANCE
 	var forced: Dictionary = overrides.get("parts", {})
 	for _attempt in MAX_UNIQUE_TRIES:
-		result.parts = _roll_parts(result.gender, forced, rng)
+		result.parts = _roll_parts(result.kind, result.gender, result.mirror_eyes, forced, rng)
 		if not avoid.has(result.signature()):
 			break
 	result.skin_color = overrides["skin_color"] if overrides.has("skin_color") else random_skin(rng)
@@ -68,18 +74,20 @@ static func random_hair(rng: RandomNumberGenerator) -> Color:
 	return _jitter(HAIR_COLORS[_weighted_index(HAIR_WEIGHTS, rng)], rng, 0.01, 0.05, 0.05)
 
 
-static func _roll_gender(rng: RandomNumberGenerator) -> StringName:
-	var options := NpcLibrary.genders()
+static func _roll_gender(rng: RandomNumberGenerator, kind: StringName) -> StringName:
+	var options := NpcLibrary.genders(kind)
 	var weights: Array[float] = []
 	for gender in options:
 		weights.append(float(GENDER_WEIGHTS.get(gender, 1.0)))
 	return StringName(options[_weighted_index(weights, rng)])
 
 
-static func _roll_parts(gender: StringName, forced: Dictionary, rng: RandomNumberGenerator) -> Dictionary:
+static func _roll_parts(
+	kind: StringName, gender: StringName, mirror_eyes: bool, forced: Dictionary, rng: RandomNumberGenerator
+) -> Dictionary:
 	# Beard first: a beard makes a mustache more likely.
 	var order: Array[String] = []
-	for part in NpcLibrary.part_names():
+	for part in NpcLibrary.part_names(kind):
 		order.append(part)
 	if order.has("beard"):
 		order.erase("beard")
@@ -89,7 +97,9 @@ static func _roll_parts(gender: StringName, forced: Dictionary, rng: RandomNumbe
 		if forced.has(part):
 			parts[part] = String(forced[part])
 			continue
-		var pool := NpcLibrary.files(part, gender)
+		if mirror_eyes and NpcLibrary.is_mirror(part):
+			continue
+		var pool := NpcLibrary.files(part, gender, kind)
 		if pool.is_empty():
 			continue
 		if rng.randf() < _chance(part, gender, parts):
