@@ -1,0 +1,125 @@
+keys,en,tr
+# --- meta ---,,
+lang_name,English,Türkçe
+game_title,"One Drink, Please","Bir İçki, Lütfen"
+gold_fmt,{amount} Gold,{amount} Gold
+btn_yes,Yes,Evet
+btn_no,No,Hayır
+# --- main menu ---,,
+menu_play,Play,Oyna
+menu_settings,Settings,Ayarlar
+menu_quit,Quit,Çıkış
+menu_back,Back,Geri
+menu_choose_slot,Choose a save slot,Bir kayıt slotu seç
+slot_title,SLOT {slot},SLOT {slot}
+slot_new_game,New game,Yeni oyun
+slot_no_manual,No manual save,Manuel kayıt yok
+slot_manual_text,Day {day}  Week {week}  Month {month}\nGold: {money}\nDebt: {debt}\nPlaytime: {playtime}\n{date},Gün {day}  Hafta {week}  Ay {month}\nGold: {money}\nBorç: {debt}\nOyun süresi: {playtime}\n{date}
+slot_autosave,Autosave,Otomatik kayıt
+slot_auto_text,Day {day}  Week {week}  Month {month} - {money}\n{date},Gün {day}  Hafta {week}  Ay {month} - {money}\n{date}
+slot_no_autosave,Empty,Boş
+slot_delete,Delete slot,Slotu sil
+slot_delete_confirm,Delete everything in slot {slot}?,Slot {slot} içindeki her şey silinsin mi?
+playtime_fmt,{h}h {m}m,{h}sa {m}dk
+# --- settings ---,,
+settings_title,Settings,Ayarlar
+settings_language,Language,Dil
+settings_master,Master volume,Ana ses
+settings_music,Music volume,Müzik sesi
+settings_sfx,Effects volume,Efekt sesi
+settings_fullscreen,Fullscreen,Tam ekran
+# --- pause menu ---,,
+pause_title,Paused,Duraklatıldı
+pause_resume,Resume,Devam et
+pause_settings,Settings,Ayarlar
+pause_main_menu,Main menu,Ana menü
+pause_confirm_menu,Back to main menu? Progress since the last save or autosave is lost.,Ana menüye dönülsün mü? Son kayıttan veya otomatik kayıttan sonraki ilerleme kaybolur.
+# --- hud ---,,
+hud_status,Month {month}  Week {week}/{weeks}  Day {day}/{days}   Gold {money}   Debt {debt}   Week sales {earned}/{target},Ay {month}  Hafta {week}/{weeks}  Gün {day}/{days}   Altın {money}   Borç {debt}   Haftalık satış {earned}/{target}
+hud_status2,{glasses}   Trust {trust}  Favor {favor},{glasses}   Güven {trust}  İtibar {favor}
+hud_glass_count,{name} {count},{name} {count}
+btn_serve,Serve!,Servis!
+btn_continue,Continue,Devam
+btn_pay,Pay,Öde
+btn_save_game,Save game,Oyunu kaydet
+btn_open_shop,Open shop,Dükkanı aç
+# --- shop opening ---,,
+opening_title,Day {day}/{days} - Week {week}/{weeks} - Month {month},Gün {day}/{days} - Hafta {week}/{weeks} - Ay {month}
+opening_info,Gold: {money}\nDebt: {debt}\nWeek sales: {earned}/{target}\nSave slot: {slot},Gold: {money}\nBorç: {debt}\nHaftalık satış: {earned}/{target}\nKayıt slotu: {slot}
+opening_saved,Saved to slot {slot}.,Slot {slot} içine kaydedildi.
+opening_save_failed,Could not save!,Kaydedilemedi!
+# --- day end / shop / collector ---,,
+day_end_summary,Day done. Earned {earned} today.\nWeek sales: {week_earned} / {target}\nTrust {trust}  Favor {favor},Gün bitti. Bugün {earned} kazandın.\nHaftalık satış: {week_earned} / {target}\nGüven {trust}  İtibar {favor}
+day_end_target_met,Weekly target met.,Haftalık hedef tutturuldu.
+day_end_target_missed,Weekly target MISSED. Penalty +{penalty} debt.,Haftalık hedef KAÇTI. Ceza: borca +{penalty}.
+day_end_collector_next,Debt collector comes next.,Sırada borç tahsildarı var.
+day_end_bad_rep,Bad rep: fewer customers for {days} more day(s).,Kötü itibar: {days} gün daha az müşteri gelecek.
+shop_buy_glass,Buy {name} (have {count})  -  {price},{name} al (var: {count})  -  {price}
+shop_upgrade,{name}  Lv{level}  -  {price},{name}  Sv{level}  -  {price}
+shop_upgrade_max,{name}  Lv{level} (max),{name}  Sv{level} (maks)
+shop_unlock,Unlock {name}  -  {price},{name} aç  -  {price}
+collector_text,Debt collector.\nMonth debt left: {debt}\nYou have: {money},Borç tahsildarı.\nAy borcu kalan: {debt}\nElindeki: {money}
+collector_forced,Month end. Full payment forced.\nUnpaid part returns with +{interest}% interest.,Ay sonu. Tam ödeme zorunlu.\nÖdenmeyen kısım +%{interest} faizle geri gelir.
+collector_suggested,Suggested this week: {amount}. Pay less to defer.,Bu hafta önerilen: {amount}. Daha az ödersen ertelenir.
+collector_pay_label,Pay: {amount},Öde: {amount}
+# --- prompts ---,,
+prompt_prep,LMB on glass top: grab | hold LMB on bottle: pour | LMB on rack: new glass | beer goes in a mug | then Serve!,Bardağın üstüne SolTık: tut | şişeye basılı tut: doldur | rafa SolTık: yeni bardak | bira kupaya | sonra Servis!
+prompt_serve,"W: walk | A/D: balance | LMB glass top: grab, release over customer | RMB/E on customer: kick out | Space: leave table","W: yürü | A/D: denge | bardak üstüne SolTık: tut, müşterinin üstünde bırak | müşteriye SağTık/E: kov | Boşluk: masadan ayrıl"
+# --- toasts ---,,
+toast_autosaved,Autosaved,Otomatik kaydedildi
+toast_round,Round {round}/{rounds},Tur {round}/{rounds}
+toast_put_glass,Put a glass on the tray first,Önce tepsiye bir bardak koy
+toast_no_glass,No {name} left. Buy more at the shop,{name} kalmadı. Dükkandan daha fazla al
+toast_tray_full,Tray is full,Tepsi dolu
+toast_glass_broke,{name} broke for good! {left} left,{name} sonsuza dek kırıldı! {left} kaldı
+toast_served,+{payout},+{payout}
+toast_served_tip,+{payout} (+{tip} tip),+{payout} (+{tip} bahşiş)
+toast_wrong_glass,"wrong glass, customer unhappy","yanlış bardak, müşteri mutsuz"
+toast_bad_drink,Wrong or bad drink,Yanlış veya kötü içki
+toast_grumbles,He grumbles and leaves,Söylenerek çıkıp gitti
+toast_missed,Table {table}: {count} order(s) missed,Masa {table}: {count} sipariş kaçırıldı
+toast_swing_patience,He lost patience and swings at you!,"Sabrı taştı, sana saldırıyor!"
+toast_swing_leave,He swings at you as you walk off!,Ayrılırken sana saldırıyor!
+toast_swing,He swings at you!,Sana saldırıyor!
+toast_you_attack,You attack!,Sen saldırıyorsun!
+toast_kick_quiet,Troublemaker thrown out quietly,Belalı müşteri sessizce atıldı
+toast_kick_innocent,You kicked out an innocent customer! Trust down,Suçsuz bir müşteriyi kovdun! Güven düştü
+toast_kick_objects,"He objects loudly. Kick again to attack, or wait.","Yüksek sesle itiraz ediyor. Saldırmak için tekrar kov, ya da bekle."
+toast_fight_won,You threw him out! Customers like it. Favor up,Onu dışarı attın! Müşteriler beğendi. İtibar arttı
+toast_fight_lost,"You lost the fight. Trust and favor down, fewer customers coming","Kavgayı kaybettin. Güven ve itibar düştü, daha az müşteri gelecek"
+toast_paid,Paid {paid}. Debt left {debt},{paid} ödendi. Kalan borç {debt}
+toast_month_closed,Month closed. Paid {paid}. New month debt {debt} (carried {carried}),Ay kapandı. {paid} ödendi. Yeni ay borcu {debt} (devreden {carried})
+# --- table / fight ---,,
+table_line,Table {id}: {list},Masa {id}: {list}
+table_out,out,çıktı
+table_ok,ok,tamam
+fight_title,FIGHT!  Mash A / D alternately,KAVGA!  A / D tuşlarına sırayla bas
+# --- drinks ---,,
+drink_beer,Beer,Bira
+drink_water,Water,Su
+drink_wine,Wine,Şarap
+drink_vodka,Vodka,Votka
+drink_cider,Cider,Elma şarabı
+drink_whiskey,Whiskey,Viski
+drink_rum,Rum,Rom
+# --- glasses ---,,
+glass_mug,Beer mug,Bira kupası
+glass_glass,Water glass,Su bardağı
+# --- upgrades ---,,
+upgrade_tray_slots,Bigger tray,Daha büyük tepsi
+upgrade_tables,More tables,Daha fazla masa
+upgrade_decor,Nicer tables,Daha güzel masalar
+# --- debug / npc creator ---,,
+menu_debug,Debug,Debug
+npc_creator_title,Debug: NPC creator,Debug: NPC oluşturucu
+npc_randomize,Randomize,Rastgele
+npc_rescan,Rescan assets,Assetleri yeniden tara
+npc_gender,Gender,Cinsiyet
+npc_skin,Skin color,Ten rengi
+npc_hair,Hair color,Saç / sakal rengi
+npc_none,(none),(yok)
+npc_assets_report,Assets found: {report},Bulunan asset: {report}
+npc_no_assets,"No images found. Drop PNGs into res://assets/npc/<part>/ and press Rescan.","Resim bulunamadı. PNG'leri res://assets/npc/<parça>/ içine at ve Yeniden tara'ya bas."
+gender_male,Male,Erkek
+gender_female,Female,Kadın
+gender_other,Other,Diğer

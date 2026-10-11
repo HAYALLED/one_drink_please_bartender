@@ -1,0 +1,49 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/objects/glass.gd" id="1_glass"]
+[ext_resource type="Script" path="res://scripts/objects/liquid_visual.gd" id="2_liquid"]
+
+[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_glass"]
+friction = 0.7
+bounce = 0.05
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_body"]
+size = Vector2(14, 22)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_grab"]
+size = Vector2(12, 12)
+
+[node name="Glass" type="RigidBody2D" groups=["glasses"]]
+collision_layer = 2
+collision_mask = 3
+mass = 0.6
+physics_material_override = SubResource("PhysicsMaterial_glass")
+can_sleep = false
+continuous_cd = 1
+linear_damp = 0.4
+angular_damp = 1.5
+script = ExtResource("1_glass")
+
+[node name="Body" type="Polygon2D" parent="."]
+color = Color(0.8, 0.9, 1, 0.22)
+polygon = PackedVector2Array(-7, -11, 7, -11, 7, 11, -7, 11)
+
+[node name="Liquid" type="Node2D" parent="."]
+script = ExtResource("2_liquid")
+
+[node name="Outline" type="Line2D" parent="."]
+points = PackedVector2Array(-7, -11, -7, 11, 7, 11, 7, -11)
+width = 1.0
+default_color = Color(0.85, 0.95, 1, 0.9)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_body")
+
+[node name="GrabZone" type="Area2D" parent="." groups=["glass_grab"]]
+collision_layer = 8
+collision_mask = 0
+monitoring = false
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="GrabZone"]
+position = Vector2(0, -12)
+shape = SubResource("RectangleShape2D_grab")

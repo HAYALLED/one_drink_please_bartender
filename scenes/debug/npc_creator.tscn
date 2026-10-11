@@ -1,0 +1,172 @@
+[gd_scene format=3 uid="uid://ox0n5xuacpsw"]
+
+[ext_resource type="Script" uid="uid://cdpk8a47hqlya" path="res://scripts/debug/npc_creator.gd" id="1_script"]
+[ext_resource type="Theme" path="res://assets/ui/menu_theme.tres" id="2_theme"]
+[ext_resource type="Texture2D" uid="uid://be5m22hk3yqwc" path="res://icon.svg" id="3_icon"]
+[ext_resource type="Script" uid="uid://cvcnwrkf2cumt" path="res://scripts/ui/loc_label.gd" id="4_loclabel"]
+[ext_resource type="PackedScene" path="res://scenes/ui/nine_patch_button.tscn" id="5_button"]
+[ext_resource type="PackedScene" path="res://scenes/npc/npc_view.tscn" id="6_npc"]
+
+[node name="NpcCreator" type="Control" unique_id=1922603835]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("2_theme")
+script = ExtResource("1_script")
+
+[node name="Frame" type="NinePatchRect" parent="." unique_id=584237923]
+self_modulate = Color(0.6, 0.6, 0.75, 1)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 8.0
+offset_top = 8.0
+offset_right = -8.0
+offset_bottom = -8.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("3_icon")
+patch_margin_left = 16
+patch_margin_top = 16
+patch_margin_right = 16
+patch_margin_bottom = 16
+
+[node name="Margin" type="MarginContainer" parent="Frame" unique_id=637954396]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 14
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 14
+
+[node name="Content" type="VBoxContainer" parent="Frame/Margin" unique_id=1838186216]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="Title" type="Label" parent="Frame/Margin/Content" unique_id=244449403]
+layout_mode = 2
+horizontal_alignment = 1
+script = ExtResource("4_loclabel")
+text_key = "npc_creator_title"
+
+[node name="Body" type="HBoxContainer" parent="Frame/Margin/Content" unique_id=1330443273]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 8
+
+[node name="PreviewFrame" type="NinePatchRect" parent="Frame/Margin/Content/Body" unique_id=1071831746]
+self_modulate = Color(0.35, 0.35, 0.45, 1)
+custom_minimum_size = Vector2(200, 0)
+clip_contents = true
+layout_mode = 2
+texture = ExtResource("3_icon")
+patch_margin_left = 16
+patch_margin_top = 16
+patch_margin_right = 16
+patch_margin_bottom = 16
+
+[node name="PreviewCenter" type="Control" parent="Frame/Margin/Content/Body/PreviewFrame" unique_id=1586193714]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="NpcView" parent="Frame/Margin/Content/Body/PreviewFrame/PreviewCenter" unique_id=395126033 instance=ExtResource("6_npc")]
+
+[node name="Controls" type="VBoxContainer" parent="Frame/Margin/Content/Body" unique_id=879868554]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 6
+
+[node name="InfoLabel" type="Label" parent="Frame/Margin/Content/Body/Controls" unique_id=538230241]
+layout_mode = 2
+theme_override_font_sizes/font_size = 8
+autowrap_mode = 3
+
+[node name="GenderRow" type="HBoxContainer" parent="Frame/Margin/Content/Body/Controls" unique_id=1573770989]
+layout_mode = 2
+
+[node name="GenderLabel" type="Label" parent="Frame/Margin/Content/Body/Controls/GenderRow" unique_id=1121752267]
+custom_minimum_size = Vector2(90, 0)
+layout_mode = 2
+script = ExtResource("4_loclabel")
+text_key = "npc_gender"
+
+[node name="GenderOption" type="OptionButton" parent="Frame/Margin/Content/Body/Controls/GenderRow" unique_id=1211659597]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="SkinRow" type="HBoxContainer" parent="Frame/Margin/Content/Body/Controls" unique_id=427634364]
+layout_mode = 2
+
+[node name="SkinLabel" type="Label" parent="Frame/Margin/Content/Body/Controls/SkinRow" unique_id=1426637933]
+custom_minimum_size = Vector2(90, 0)
+layout_mode = 2
+script = ExtResource("4_loclabel")
+text_key = "npc_skin"
+
+[node name="SkinPicker" type="ColorPickerButton" parent="Frame/Margin/Content/Body/Controls/SkinRow" unique_id=48639514]
+custom_minimum_size = Vector2(0, 18)
+layout_mode = 2
+size_flags_horizontal = 3
+edit_alpha = false
+
+[node name="HairRow" type="HBoxContainer" parent="Frame/Margin/Content/Body/Controls" unique_id=1391766489]
+layout_mode = 2
+
+[node name="HairLabel" type="Label" parent="Frame/Margin/Content/Body/Controls/HairRow" unique_id=1554201311]
+custom_minimum_size = Vector2(90, 0)
+layout_mode = 2
+script = ExtResource("4_loclabel")
+text_key = "npc_hair"
+
+[node name="HairPicker" type="ColorPickerButton" parent="Frame/Margin/Content/Body/Controls/HairRow" unique_id=1763310758]
+custom_minimum_size = Vector2(0, 18)
+layout_mode = 2
+size_flags_horizontal = 3
+edit_alpha = false
+
+[node name="PartsScroll" type="ScrollContainer" parent="Frame/Margin/Content/Body/Controls" unique_id=66914398]
+layout_mode = 2
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
+
+[node name="PartsList" type="VBoxContainer" parent="Frame/Margin/Content/Body/Controls/PartsScroll" unique_id=1213194336]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 4
+
+[node name="Buttons" type="HBoxContainer" parent="Frame/Margin/Content" unique_id=393461492]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="RandomizeButton" parent="Frame/Margin/Content/Buttons" unique_id=1793151615 instance=ExtResource("5_button")]
+custom_minimum_size = Vector2(0, 24)
+layout_mode = 2
+size_flags_horizontal = 3
+text_key = "npc_randomize"
+
+[node name="RescanButton" parent="Frame/Margin/Content/Buttons" unique_id=278767471 instance=ExtResource("5_button")]
+custom_minimum_size = Vector2(0, 24)
+layout_mode = 2
+size_flags_horizontal = 3
+text_key = "npc_rescan"
+
+[node name="BackButton" parent="Frame/Margin/Content/Buttons" unique_id=1918915508 instance=ExtResource("5_button")]
+custom_minimum_size = Vector2(0, 24)
+layout_mode = 2
+size_flags_horizontal = 3
+text_key = "menu_back"

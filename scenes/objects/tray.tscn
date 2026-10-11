@@ -1,0 +1,33 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/objects/tray.gd" id="1_tray"]
+
+[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_tray"]
+friction = 0.7
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_tray"]
+size = Vector2(150, 8)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_surface"]
+size = Vector2(150, 30)
+
+[node name="Tray" type="AnimatableBody2D"]
+collision_layer = 1
+collision_mask = 0
+physics_material_override = SubResource("PhysicsMaterial_tray")
+script = ExtResource("1_tray")
+
+[node name="Visual" type="Polygon2D" parent="."]
+color = Color(0.62, 0.6, 0.66, 1)
+polygon = PackedVector2Array(-75, -4, 75, -4, 75, 4, -75, 4)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_tray")
+
+[node name="Surface" type="Area2D" parent="."]
+collision_layer = 0
+collision_mask = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Surface"]
+position = Vector2(0, -19)
+shape = SubResource("RectangleShape2D_surface")

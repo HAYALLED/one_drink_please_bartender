@@ -1,0 +1,149 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" uid="uid://w3inl4vj8f0m" path="res://scripts/menus/settings_menu.gd" id="1_script"]
+[ext_resource type="Theme" path="res://assets/ui/menu_theme.tres" id="2_theme"]
+[ext_resource type="Texture2D" uid="uid://be5m22hk3yqwc" path="res://icon.svg" id="3_icon"]
+[ext_resource type="Script" path="res://scripts/ui/loc_label.gd" id="4_loclabel"]
+[ext_resource type="PackedScene" path="res://scenes/ui/nine_patch_button.tscn" id="5_button"]
+
+[node name="SettingsMenu" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme = ExtResource("2_theme")
+script = ExtResource("1_script")
+
+[node name="Frame" type="NinePatchRect" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -190.0
+offset_top = -135.0
+offset_right = 190.0
+offset_bottom = 135.0
+grow_horizontal = 2
+grow_vertical = 2
+self_modulate = Color(0.6, 0.6, 0.75, 1)
+texture = ExtResource("3_icon")
+patch_margin_left = 16
+patch_margin_top = 16
+patch_margin_right = 16
+patch_margin_bottom = 16
+
+[node name="Margin" type="MarginContainer" parent="Frame"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 24
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 24
+theme_override_constants/margin_bottom = 20
+
+[node name="Content" type="VBoxContainer" parent="Frame/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="Title" type="Label" parent="Frame/Margin/Content"]
+layout_mode = 2
+horizontal_alignment = 1
+script = ExtResource("4_loclabel")
+text_key = "settings_title"
+
+[node name="LanguageRow" type="HBoxContainer" parent="Frame/Margin/Content"]
+layout_mode = 2
+
+[node name="LanguageLabel" type="Label" parent="Frame/Margin/Content/LanguageRow"]
+custom_minimum_size = Vector2(130, 0)
+layout_mode = 2
+size_flags_vertical = 4
+script = ExtResource("4_loclabel")
+text_key = "settings_language"
+
+[node name="LanguageOption" type="OptionButton" parent="Frame/Margin/Content/LanguageRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="MasterRow" type="HBoxContainer" parent="Frame/Margin/Content"]
+layout_mode = 2
+
+[node name="MasterLabel" type="Label" parent="Frame/Margin/Content/MasterRow"]
+custom_minimum_size = Vector2(130, 0)
+layout_mode = 2
+size_flags_vertical = 4
+script = ExtResource("4_loclabel")
+text_key = "settings_master"
+
+[node name="MasterSlider" type="HSlider" parent="Frame/Margin/Content/MasterRow"]
+custom_minimum_size = Vector2(0, 16)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+max_value = 1.0
+step = 0.05
+value = 1.0
+
+[node name="MusicRow" type="HBoxContainer" parent="Frame/Margin/Content"]
+layout_mode = 2
+
+[node name="MusicLabel" type="Label" parent="Frame/Margin/Content/MusicRow"]
+custom_minimum_size = Vector2(130, 0)
+layout_mode = 2
+size_flags_vertical = 4
+script = ExtResource("4_loclabel")
+text_key = "settings_music"
+
+[node name="MusicSlider" type="HSlider" parent="Frame/Margin/Content/MusicRow"]
+custom_minimum_size = Vector2(0, 16)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+max_value = 1.0
+step = 0.05
+value = 0.8
+
+[node name="SfxRow" type="HBoxContainer" parent="Frame/Margin/Content"]
+layout_mode = 2
+
+[node name="SfxLabel" type="Label" parent="Frame/Margin/Content/SfxRow"]
+custom_minimum_size = Vector2(130, 0)
+layout_mode = 2
+size_flags_vertical = 4
+script = ExtResource("4_loclabel")
+text_key = "settings_sfx"
+
+[node name="SfxSlider" type="HSlider" parent="Frame/Margin/Content/SfxRow"]
+custom_minimum_size = Vector2(0, 16)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+max_value = 1.0
+step = 0.05
+value = 1.0
+
+[node name="FullscreenRow" type="HBoxContainer" parent="Frame/Margin/Content"]
+layout_mode = 2
+
+[node name="FullscreenLabel" type="Label" parent="Frame/Margin/Content/FullscreenRow"]
+custom_minimum_size = Vector2(130, 0)
+layout_mode = 2
+size_flags_vertical = 4
+script = ExtResource("4_loclabel")
+text_key = "settings_fullscreen"
+
+[node name="FullscreenCheck" type="CheckBox" parent="Frame/Margin/Content/FullscreenRow"]
+layout_mode = 2
+
+[node name="BackButton" parent="Frame/Margin/Content" instance=ExtResource("5_button")]
+custom_minimum_size = Vector2(0, 26)
+layout_mode = 2
+text_key = "menu_back"

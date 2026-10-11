@@ -1,0 +1,151 @@
+[gd_scene format=3 uid="uid://dt3enik3f88ms"]
+
+[ext_resource type="Script" uid="uid://k37p2opdtgbf" path="res://scripts/menus/main_menu.gd" id="1_menu"]
+[ext_resource type="Theme" path="res://assets/ui/menu_theme.tres" id="2_theme"]
+[ext_resource type="Texture2D" uid="uid://be5m22hk3yqwc" path="res://icon.svg" id="3_icon"]
+[ext_resource type="Script" uid="uid://cvcnwrkf2cumt" path="res://scripts/ui/loc_label.gd" id="4_loclabel"]
+[ext_resource type="PackedScene" path="res://scenes/ui/nine_patch_button.tscn" id="5_button"]
+[ext_resource type="PackedScene" path="res://scenes/menus/settings_menu.tscn" id="6_settings"]
+[ext_resource type="PackedScene" path="res://scenes/debug/npc_creator.tscn" id="7_npc_creator"]
+
+[node name="MainMenu" type="Control" unique_id=2140520994]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("2_theme")
+script = ExtResource("1_menu")
+
+[node name="Background" type="ColorRect" parent="." unique_id=1260707477]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0.1, 0.07, 0.12, 1)
+
+[node name="TitlePlate" type="NinePatchRect" parent="." unique_id=701395786]
+self_modulate = Color(0.6, 0.6, 0.75, 1)
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -170.0
+offset_top = 28.0
+offset_right = 170.0
+offset_bottom = 88.0
+grow_horizontal = 2
+texture = ExtResource("3_icon")
+patch_margin_left = 16
+patch_margin_top = 16
+patch_margin_right = 16
+patch_margin_bottom = 16
+
+[node name="Title" type="Label" parent="TitlePlate" unique_id=1784157845]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 28
+horizontal_alignment = 1
+vertical_alignment = 1
+script = ExtResource("4_loclabel")
+text_key = "game_title"
+
+[node name="MainBox" type="VBoxContainer" parent="." unique_id=1620187687]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -80.0
+offset_top = -10.0
+offset_right = 80.0
+offset_bottom = 144.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 8
+
+[node name="PlayButton" parent="MainBox" unique_id=1322537289 instance=ExtResource("5_button")]
+layout_mode = 2
+text_key = "menu_play"
+
+[node name="SettingsButton" parent="MainBox" unique_id=633946377 instance=ExtResource("5_button")]
+layout_mode = 2
+text_key = "menu_settings"
+
+[node name="DebugButton" parent="MainBox" unique_id=1749876933 instance=ExtResource("5_button")]
+layout_mode = 2
+text_key = "menu_debug"
+
+[node name="QuitButton" parent="MainBox" unique_id=870051624 instance=ExtResource("5_button")]
+layout_mode = 2
+text_key = "menu_quit"
+
+[node name="SlotsPanel" type="NinePatchRect" parent="." unique_id=214462990]
+visible = false
+self_modulate = Color(0.6, 0.6, 0.75, 1)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 8.0
+offset_top = 8.0
+offset_right = -8.0
+offset_bottom = -8.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("3_icon")
+patch_margin_left = 16
+patch_margin_top = 16
+patch_margin_right = 16
+patch_margin_bottom = 16
+
+[node name="Margin" type="MarginContainer" parent="SlotsPanel" unique_id=459956609]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 14
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 14
+
+[node name="Content" type="VBoxContainer" parent="SlotsPanel/Margin" unique_id=1937038401]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="SlotsTitle" type="Label" parent="SlotsPanel/Margin/Content" unique_id=1068514596]
+layout_mode = 2
+horizontal_alignment = 1
+script = ExtResource("4_loclabel")
+text_key = "menu_choose_slot"
+
+[node name="SlotsRow" type="HBoxContainer" parent="SlotsPanel/Margin/Content" unique_id=1853361709]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 8
+alignment = 1
+
+[node name="SlotsBack" parent="SlotsPanel/Margin/Content" unique_id=1347055414 instance=ExtResource("5_button")]
+custom_minimum_size = Vector2(0, 24)
+layout_mode = 2
+text_key = "menu_back"
+
+[node name="SettingsMenu" parent="." unique_id=2097389607 instance=ExtResource("6_settings")]
+visible = false
+layout_mode = 1
+theme = null
+
+[node name="NpcCreator" parent="." unique_id=1187497813 instance=ExtResource("7_npc_creator")]
+visible = false
+layout_mode = 1
