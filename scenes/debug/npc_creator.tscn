@@ -171,7 +171,7 @@ size_flags_horizontal = 3
 text = "npc_rescan"
 text_key = "npc_rescan"
 
-[node name="SaveButton" parent="Frame/Margin/Content/Buttons" instance=ExtResource("5_button")]
+[node name="SaveButton" parent="Frame/Margin/Content/Buttons" unique_id=21454893 instance=ExtResource("5_button")]
 visible = false
 custom_minimum_size = Vector2(0, 24)
 layout_mode = 2

@@ -5,10 +5,11 @@ const SLOT_COUNT := 3
 const FORMAT_VERSION := 1
 const KIND_MANUAL := "manual"
 const KIND_AUTO := "auto"
+const KIND_CONTINUE := "continue"
 
 var current_slot := 1
 # Set by the menu right before the game scene loads.
-# {"mode": "new"} or {"mode": "load", "kind": "manual" | "auto"}
+# {"mode": "new"} or {"mode": "load", "kind": "manual" | "auto" | "continue"}
 var pending: Dictionary = {}
 
 
@@ -48,9 +49,11 @@ func slot_path(slot: int) -> String:
 	return "%s/slot_%d.json" % [SAVE_DIR, slot]
 
 
+## A complete .tmp is always newer than the main file (a crash can hit between the two renames), so it is tried first.
+## A half-written .tmp fails to parse and the loop falls through to the main file, then the backup.
 func read_slot(slot: int) -> Dictionary:
 	var path := slot_path(slot)
-	for candidate in [path, path + ".bak", path + ".tmp"]:
+	for candidate in [path + ".tmp", path, path + ".bak"]:
 		var data := _read_file(candidate)
 		if not data.is_empty():
 			return data
@@ -67,7 +70,28 @@ func has_entry(slot: int, kind: String) -> bool:
 
 
 func slot_has_game(slot: int) -> bool:
-	return has_entry(slot, KIND_MANUAL) or has_entry(slot, KIND_AUTO)
+	var data := read_slot(slot)
+	for kind in [KIND_MANUAL, KIND_AUTO, KIND_CONTINUE]:
+		if data.get(kind) is Dictionary and not (data[kind] as Dictionary).is_empty():
+			return true
+	return false
+
+
+## Kind of the newest entry in the slot (manual, auto or continue), "" when the slot is empty.
+## Ties go to the later kind in the list, so continue wins over auto, auto over manual.
+func latest_kind(slot: int) -> String:
+	var data := read_slot(slot)
+	var best := ""
+	var best_time := -1.0
+	for kind in [KIND_MANUAL, KIND_AUTO, KIND_CONTINUE]:
+		var value: Variant = data.get(kind)
+		if not value is Dictionary or (value as Dictionary).is_empty():
+			continue
+		var saved_at := float((value as Dictionary).get("saved_at", 0.0))
+		if saved_at >= best_time:
+			best_time = saved_at
+			best = kind
+	return best
 
 
 func load_state(slot: int, kind: String) -> Dictionary:
@@ -81,8 +105,14 @@ func write_manual(state: Dictionary) -> bool:
 	return _write_entry(current_slot, KIND_MANUAL, state)
 
 
+## Day-start snapshot.
 func write_auto(state: Dictionary) -> bool:
 	return _write_entry(current_slot, KIND_AUTO, state)
+
+
+## Rolling snapshot of whatever the player is doing. Always replaces the previous one, so the file never grows.
+func write_continue(state: Dictionary) -> bool:
+	return _write_entry(current_slot, KIND_CONTINUE, state)
 
 
 func _write_entry(slot: int, kind: String, state: Dictionary) -> bool:
@@ -92,7 +122,6 @@ func _write_entry(slot: int, kind: String, state: Dictionary) -> bool:
 		"saved_at": Time.get_unix_time_from_system(),
 		"meta": {
 			"month": GameState.month,
-			"week": GameState.week,
 			"day": GameState.day,
 			"money": GameState.money,
 			"debt": GameState.month_debt,

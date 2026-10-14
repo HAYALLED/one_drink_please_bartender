@@ -1,0 +1,125 @@
+[gd_scene format=3 uid="uid://dr6yuirl8rcd8"]
+
+[ext_resource type="Script" uid="uid://dugqnyvyvtb6b" path="res://scripts/game mechanics/bar_game.gd" id="1_game"]
+[ext_resource type="PackedScene" path="res://scenes/objects/glass_rack.tscn" id="2_rack"]
+[ext_resource type="PackedScene" path="res://scenes/objects/pour_station.tscn" id="3_station"]
+[ext_resource type="PackedScene" path="res://scenes/objects/tray.tscn" id="4_tray"]
+[ext_resource type="PackedScene" uid="uid://b6d1iqq7bi2vu" path="res://scenes/player/hand.tscn" id="5_hand"]
+[ext_resource type="Script" uid="uid://cdc3vnj6qhd75" path="res://scripts/ui/hud.gd" id="6_hud"]
+[ext_resource type="Script" uid="uid://bn1ifapuv03ca" path="res://scripts/game mechanics/fight_minigame.gd" id="7_fight"]
+[ext_resource type="Script" uid="uid://btcds2y11x3ea" path="res://scripts/menus/pause_menu.gd" id="8_pause"]
+[ext_resource type="PackedScene" path="res://scenes/objects/beer_mug.tscn" id="9_mug"]
+[ext_resource type="PackedScene" path="res://scenes/objects/glass.tscn" id="10_glass"]
+[ext_resource type="PackedScene" path="res://scenes/objects/wine_glass.tscn" id="11_wine"]
+[ext_resource type="PackedScene" path="res://scenes/objects/tumbler.tscn" id="12_tumbler"]
+[ext_resource type="PackedScene" path="res://scenes/objects/shot_glass.tscn" id="13_shot"]
+
+[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_counter"]
+friction = 0.7
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_counter"]
+size = Vector2(600, 14)
+
+[node name="BarGame" type="Node2D" unique_id=2115852529]
+script = ExtResource("1_game")
+
+[node name="Background" type="Polygon2D" parent="." unique_id=1370951988]
+color = Color(0.12, 0.09, 0.14, 1)
+polygon = PackedVector2Array(0, 0, 640, 0, 640, 360, 0, 360)
+
+[node name="ServeLayer" type="Node2D" parent="." unique_id=906087864]
+visible = false
+
+[node name="Wall" type="Polygon2D" parent="ServeLayer" unique_id=1880269998]
+color = Color(0.2, 0.16, 0.26, 1)
+polygon = PackedVector2Array(0, 0, 640, 0, 640, 230, 0, 230)
+
+[node name="Floor" type="Polygon2D" parent="ServeLayer" unique_id=1064337659]
+color = Color(0.3, 0.2, 0.14, 1)
+polygon = PackedVector2Array(0, 230, 640, 230, 640, 360, 0, 360)
+
+[node name="Tables" type="Node2D" parent="ServeLayer" unique_id=522742184]
+
+[node name="BarLayer" type="Node2D" parent="." unique_id=1872589570]
+
+[node name="Backbar" type="Polygon2D" parent="BarLayer" unique_id=283251404]
+color = Color(0.22, 0.14, 0.12, 1)
+polygon = PackedVector2Array(0, 30, 640, 30, 640, 200, 0, 200)
+
+[node name="Counter" type="StaticBody2D" parent="BarLayer" unique_id=1360306580]
+position = Vector2(320, 207)
+collision_mask = 0
+physics_material_override = SubResource("PhysicsMaterial_counter")
+
+[node name="Visual" type="Polygon2D" parent="BarLayer/Counter" unique_id=520115221]
+color = Color(0.5, 0.32, 0.18, 1)
+polygon = PackedVector2Array(-300, -7, 300, -7, 300, 7, -300, 7)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="BarLayer/Counter" unique_id=402331419]
+shape = SubResource("RectangleShape2D_counter")
+
+[node name="MugRack" parent="BarLayer" unique_id=473134240 instance=ExtResource("2_rack")]
+position = Vector2(36, 188)
+glass_scene = ExtResource("9_mug")
+
+[node name="GlassRack" parent="BarLayer" unique_id=1461561972 instance=ExtResource("2_rack")]
+position = Vector2(82, 188)
+glass_scene = ExtResource("10_glass")
+
+[node name="WineRack" parent="BarLayer" instance=ExtResource("2_rack")]
+position = Vector2(128, 188)
+glass_scene = ExtResource("11_wine")
+
+[node name="TumblerRack" parent="BarLayer" instance=ExtResource("2_rack")]
+position = Vector2(36, 140)
+glass_scene = ExtResource("12_tumbler")
+
+[node name="ShotRack" parent="BarLayer" instance=ExtResource("2_rack")]
+position = Vector2(82, 140)
+glass_scene = ExtResource("13_shot")
+
+[node name="Stations" type="Node2D" parent="BarLayer" unique_id=724275124]
+
+[node name="Beer" parent="BarLayer/Stations" unique_id=1153820394 instance=ExtResource("3_station")]
+position = Vector2(150, 128)
+
+[node name="Water" parent="BarLayer/Stations" unique_id=1287762697 instance=ExtResource("3_station")]
+position = Vector2(220, 128)
+drink_id = &"water"
+
+[node name="Wine" parent="BarLayer/Stations" unique_id=1226425563 instance=ExtResource("3_station")]
+position = Vector2(290, 128)
+drink_id = &"wine"
+
+[node name="Vodka" parent="BarLayer/Stations" unique_id=861273847 instance=ExtResource("3_station")]
+position = Vector2(360, 128)
+drink_id = &"vodka"
+
+[node name="Cider" parent="BarLayer/Stations" unique_id=1293341535 instance=ExtResource("3_station")]
+position = Vector2(430, 128)
+drink_id = &"cider"
+
+[node name="Whiskey" parent="BarLayer/Stations" unique_id=1921508381 instance=ExtResource("3_station")]
+position = Vector2(500, 128)
+drink_id = &"whiskey"
+
+[node name="Rum" parent="BarLayer/Stations" unique_id=110967548 instance=ExtResource("3_station")]
+position = Vector2(570, 128)
+drink_id = &"rum"
+
+[node name="Glasses" type="Node2D" parent="." unique_id=321544655]
+
+[node name="Tray" parent="." unique_id=180502052 instance=ExtResource("4_tray")]
+position = Vector2(320, 310)
+
+[node name="Hand" parent="." unique_id=72646341 instance=ExtResource("5_hand")]
+position = Vector2(320, 120)
+
+[node name="HUD" type="CanvasLayer" parent="." unique_id=1211058547]
+script = ExtResource("6_hud")
+
+[node name="Fight" type="CanvasLayer" parent="." unique_id=1096244536]
+script = ExtResource("7_fight")
+
+[node name="PauseMenu" type="CanvasLayer" parent="." unique_id=1932222832]
+script = ExtResource("8_pause")

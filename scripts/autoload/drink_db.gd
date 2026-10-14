@@ -4,18 +4,19 @@ var _drinks: Dictionary = {}
 var _ids: Array[StringName] = []
 
 
+# Prices and unlock costs are in bronze (100 bronze = 1 silver, 100 silver = 1 gold).
 func _init() -> void:
-	_add(&"beer", 8, Color("d9962b"), 0.8, 0.5, 0, {
+	_add(&"beer", 303, Color("d9962b"), 0.8, 0.5, 0, {
 		"foam_color": Color("fff3d1"), "foam_px": 3.0, "alcohol": 0.15, "glass": &"mug", "penalty": 0.4,
 	})
-	_add(&"water", 3, Color("8fd3ff"), 0.8, 0.7, 0, {"penalty": 0.0})
-	_add(&"wine", 12, Color("7a1632"), 0.6, 0.45, 100, {"alcohol": 0.2, "penalty": 0.15})
-	_add(&"vodka", 10, Color("d9e2f2"), 0.7, 0.6, 130, {"alcohol": 0.35, "penalty": 0.1})
-	_add(&"cider", 9, Color("e8cf5a"), 0.8, 0.5, 120, {
+	_add(&"water", 6, Color("8fd3ff"), 0.8, 0.7, 0, {"penalty": 0.0})
+	_add(&"wine", 455, Color("7a1632"), 0.6, 0.45, 3800, {"alcohol": 0.2, "glass": &"wine_glass", "penalty": 0.15})
+	_add(&"vodka", 380, Color("d9e2f2"), 0.7, 0.6, 4900, {"alcohol": 0.35, "glass": &"shot", "penalty": 0.1})
+	_add(&"cider", 341, Color("e8cf5a"), 0.8, 0.5, 4600, {
 		"foam_color": Color("fffbe0"), "foam_px": 2.0, "alcohol": 0.12, "glass": &"mug", "penalty": 0.2,
 	})
-	_add(&"whiskey", 16, Color("a8571a"), 0.5, 0.45, 150, {"alcohol": 0.3, "penalty": 0.15})
-	_add(&"rum", 15, Color("6b2e12"), 0.5, 0.45, 200, {"alcohol": 0.3, "penalty": 0.15})
+	_add(&"whiskey", 606, Color("a8571a"), 0.5, 0.45, 5700, {"alcohol": 0.3, "glass": &"tumbler", "penalty": 0.15})
+	_add(&"rum", 568, Color("6b2e12"), 0.5, 0.45, 7600, {"alcohol": 0.3, "glass": &"tumbler", "penalty": 0.15})
 
 
 func _add(

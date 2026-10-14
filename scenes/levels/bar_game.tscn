@@ -8,6 +8,11 @@
 [ext_resource type="Script" uid="uid://cdc3vnj6qhd75" path="res://scripts/ui/hud.gd" id="6_hud"]
 [ext_resource type="Script" uid="uid://bn1ifapuv03ca" path="res://scripts/game mechanics/fight_minigame.gd" id="7_fight"]
 [ext_resource type="Script" uid="uid://btcds2y11x3ea" path="res://scripts/menus/pause_menu.gd" id="8_pause"]
+[ext_resource type="PackedScene" path="res://scenes/objects/beer_mug.tscn" id="9_mug"]
+[ext_resource type="PackedScene" path="res://scenes/objects/glass.tscn" id="10_glass"]
+[ext_resource type="PackedScene" path="res://scenes/objects/wine_glass.tscn" id="11_wine"]
+[ext_resource type="PackedScene" path="res://scenes/objects/tumbler.tscn" id="12_tumbler"]
+[ext_resource type="PackedScene" path="res://scenes/objects/shot_glass.tscn" id="13_shot"]
 
 [sub_resource type="PhysicsMaterial" id="PhysicsMaterial_counter"]
 friction = 0.7
@@ -55,10 +60,23 @@ shape = SubResource("RectangleShape2D_counter")
 
 [node name="MugRack" parent="BarLayer" unique_id=473134240 instance=ExtResource("2_rack")]
 position = Vector2(36, 188)
-glass_type = &"mug"
+glass_scene = ExtResource("9_mug")
 
 [node name="GlassRack" parent="BarLayer" unique_id=1461561972 instance=ExtResource("2_rack")]
-position = Vector2(70, 188)
+position = Vector2(82, 188)
+glass_scene = ExtResource("10_glass")
+
+[node name="WineRack" parent="BarLayer" instance=ExtResource("2_rack")]
+position = Vector2(128, 188)
+glass_scene = ExtResource("11_wine")
+
+[node name="TumblerRack" parent="BarLayer" instance=ExtResource("2_rack")]
+position = Vector2(36, 140)
+glass_scene = ExtResource("12_tumbler")
+
+[node name="ShotRack" parent="BarLayer" instance=ExtResource("2_rack")]
+position = Vector2(82, 140)
+glass_scene = ExtResource("13_shot")
 
 [node name="Stations" type="Node2D" parent="BarLayer" unique_id=724275124]
 

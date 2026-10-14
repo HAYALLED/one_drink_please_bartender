@@ -9,6 +9,7 @@ extends RefCounted
 ## - All images of one character must share the same canvas size; they are stacked on the same origin.
 ## - eye_2 has no folder: it is eye_1 drawn mirrored (flipped around the canvas center).
 ##   Draw only the left eye into eye_1; the right eye is generated.
+##   The folder may be called eye_1 or eyes. eye_1 / eye_2 always show up in the debug creator.
 
 const KIND_NPC := &"npc"
 const KIND_PLAYER := &"player"
@@ -22,6 +23,11 @@ const DEFAULT_GENDERS: PackedStringArray = ["male", "female"]
 
 ## Virtual part -> part whose images it mirrors.
 const MIRROR_PARTS := {"eye_2": "eye_1"}
+## Folder name -> part name, for folders that were named differently. A folder called "eyes" is read as eye_1.
+## A real folder with the part's own name wins over its alias.
+const FOLDER_ALIASES := {"eyes": "eye_1"}
+## Parts that always exist, even when their folder is missing or empty, so the debug creator always lists them.
+const ALWAYS_PARTS: PackedStringArray = ["eye_1"]
 
 ## Draw order, bottom to top. Folders not listed here are drawn on top, alphabetically.
 const LAYER_ORDER: PackedStringArray = [
@@ -35,6 +41,8 @@ const HAIR_PARTS: PackedStringArray = ["eyebrows", "mustache", "beard", "hair"]
 
 ## kind -> { part -> PackedStringArray of relative image paths }
 static var _files: Dictionary = {}
+## kind -> { part -> folder name on disk }
+static var _folders: Dictionary = {}
 
 
 static func root(kind: StringName) -> String:
@@ -47,16 +55,26 @@ static func is_mirror(part: String) -> bool:
 
 static func rescan(kind: StringName = KIND_NPC) -> void:
 	var parts := {}
+	var folders := {}
 	var base := root(kind)
 	for folder in DirAccess.get_directories_at(base):
 		if folder.begins_with(".") or MIRROR_PARTS.has(folder):
 			continue
-		parts[folder] = _scan_folder(base.path_join(folder), "")
+		var part := String(FOLDER_ALIASES.get(folder, folder))
+		if parts.has(part) and folder != part:
+			continue
+		parts[part] = _scan_folder(base.path_join(folder), "")
+		folders[part] = folder
+	for required in ALWAYS_PARTS:
+		if not parts.has(required):
+			parts[required] = PackedStringArray()
+			folders[required] = required
 	for mirror: String in MIRROR_PARTS:
 		var source := String(MIRROR_PARTS[mirror])
 		if parts.has(source):
 			parts[mirror] = parts[source]
 	_files[kind] = parts
+	_folders[kind] = folders
 
 
 ## Part names in draw order (includes folders that are still empty).
@@ -102,7 +120,9 @@ static func count(part: String, kind: StringName = KIND_NPC) -> int:
 
 
 static func texture(part: String, file: String, kind: StringName = KIND_NPC) -> Texture2D:
-	var folder := String(MIRROR_PARTS.get(part, part))
+	_table(kind)
+	var source := String(MIRROR_PARTS.get(part, part))
+	var folder := String((_folders.get(kind, {}) as Dictionary).get(source, source))
 	var path := root(kind).path_join(folder).path_join(file)
 	if not ResourceLoader.exists(path):
 		return null

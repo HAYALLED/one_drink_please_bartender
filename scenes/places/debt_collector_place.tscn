@@ -1,0 +1,126 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/places/debt_collector_place.gd" id="1_place"]
+
+[node name="DebtCollectorPlace" type="Node2D"]
+script = ExtResource("1_place")
+
+[node name="Wall" type="Polygon2D" parent="."]
+color = Color(0.16, 0.1, 0.1, 1)
+polygon = PackedVector2Array(0, 0, 640, 0, 640, 190, 0, 190)
+
+[node name="Floor" type="Polygon2D" parent="."]
+color = Color(0.22, 0.15, 0.12, 1)
+polygon = PackedVector2Array(0, 190, 640, 190, 640, 360, 0, 360)
+
+[node name="Baseboard" type="Polygon2D" parent="."]
+color = Color(0.1, 0.06, 0.06, 1)
+polygon = PackedVector2Array(0, 184, 640, 184, 640, 190, 0, 190)
+
+[node name="Rug" type="Polygon2D" parent="."]
+color = Color(0.4, 0.1, 0.12, 1)
+polygon = PackedVector2Array(210, 196, 430, 196, 470, 256, 170, 256)
+
+[node name="Shelf" type="Polygon2D" parent="."]
+color = Color(0.26, 0.17, 0.12, 1)
+polygon = PackedVector2Array(210, 30, 430, 30, 430, 108, 210, 108)
+
+[node name="ShelfMiddle" type="Polygon2D" parent="Shelf"]
+color = Color(0.16, 0.1, 0.08, 1)
+polygon = PackedVector2Array(210, 66, 430, 66, 430, 70, 210, 70)
+
+[node name="BookA" type="Polygon2D" parent="Shelf"]
+color = Color(0.5, 0.18, 0.16, 1)
+polygon = PackedVector2Array(220, 40, 232, 40, 232, 66, 220, 66)
+
+[node name="BookB" type="Polygon2D" parent="Shelf"]
+color = Color(0.2, 0.3, 0.4, 1)
+polygon = PackedVector2Array(234, 46, 246, 46, 246, 66, 234, 66)
+
+[node name="BookC" type="Polygon2D" parent="Shelf"]
+color = Color(0.55, 0.45, 0.2, 1)
+polygon = PackedVector2Array(248, 38, 260, 38, 260, 66, 248, 66)
+
+[node name="BookD" type="Polygon2D" parent="Shelf"]
+color = Color(0.2, 0.3, 0.4, 1)
+polygon = PackedVector2Array(350, 80, 362, 80, 362, 108, 350, 108)
+
+[node name="BookE" type="Polygon2D" parent="Shelf"]
+color = Color(0.5, 0.18, 0.16, 1)
+polygon = PackedVector2Array(364, 84, 376, 84, 376, 108, 364, 108)
+
+[node name="Collector" type="Node2D" parent="."]
+position = Vector2(320, 150)
+
+[node name="Placeholder" type="Node2D" parent="Collector"]
+
+[node name="Body" type="Polygon2D" parent="Collector/Placeholder"]
+color = Color(0.45, 0.12, 0.14, 1)
+polygon = PackedVector2Array(-11, -40, 11, -40, 11, 0, -11, 0)
+
+[node name="Head" type="Polygon2D" parent="Collector/Placeholder"]
+color = Color(0.85, 0.7, 0.55, 1)
+polygon = PackedVector2Array(-6, -52, 6, -52, 6, -40, -6, -40)
+
+[node name="Hat" type="Polygon2D" parent="Collector/Placeholder"]
+color = Color(0.1, 0.08, 0.08, 1)
+polygon = PackedVector2Array(-9, -58, 9, -58, 9, -52, -9, -52)
+
+[node name="Desk" type="Polygon2D" parent="."]
+color = Color(0.45, 0.28, 0.15, 1)
+polygon = PackedVector2Array(240, 140, 400, 140, 400, 148, 240, 148)
+
+[node name="DeskFront" type="Polygon2D" parent="Desk"]
+color = Color(0.33, 0.2, 0.1, 1)
+polygon = PackedVector2Array(244, 148, 396, 148, 396, 172, 244, 172)
+
+[node name="Ledger" type="Polygon2D" parent="Desk"]
+color = Color(0.1, 0.1, 0.12, 1)
+polygon = PackedVector2Array(300, 134, 330, 134, 330, 140, 300, 140)
+
+[node name="CoinSack" type="Polygon2D" parent="Desk"]
+color = Color(0.55, 0.45, 0.25, 1)
+polygon = PackedVector2Array(360, 126, 374, 126, 378, 140, 356, 140)
+
+[node name="GuardLeft" type="Node2D" parent="."]
+position = Vector2(200, 178)
+
+[node name="Placeholder" type="Node2D" parent="GuardLeft"]
+
+[node name="Body" type="Polygon2D" parent="GuardLeft/Placeholder"]
+color = Color(0.25, 0.27, 0.32, 1)
+polygon = PackedVector2Array(-13, -42, 13, -42, 13, 0, -13, 0)
+
+[node name="Head" type="Polygon2D" parent="GuardLeft/Placeholder"]
+color = Color(0.85, 0.7, 0.55, 1)
+polygon = PackedVector2Array(-6, -54, 6, -54, 6, -42, -6, -42)
+
+[node name="Helmet" type="Polygon2D" parent="GuardLeft/Placeholder"]
+color = Color(0.55, 0.57, 0.6, 1)
+polygon = PackedVector2Array(-8, -60, 8, -60, 8, -54, -8, -54)
+
+[node name="Spear" type="Polygon2D" parent="GuardLeft/Placeholder"]
+color = Color(0.4, 0.28, 0.16, 1)
+polygon = PackedVector2Array(16, -70, 18, -70, 18, 0, 16, 0)
+
+[node name="GuardRight" type="Node2D" parent="."]
+position = Vector2(440, 178)
+
+[node name="Placeholder" type="Node2D" parent="GuardRight"]
+scale = Vector2(-1, 1)
+
+[node name="Body" type="Polygon2D" parent="GuardRight/Placeholder"]
+color = Color(0.25, 0.27, 0.32, 1)
+polygon = PackedVector2Array(-13, -42, 13, -42, 13, 0, -13, 0)
+
+[node name="Head" type="Polygon2D" parent="GuardRight/Placeholder"]
+color = Color(0.85, 0.7, 0.55, 1)
+polygon = PackedVector2Array(-6, -54, 6, -54, 6, -42, -6, -42)
+
+[node name="Helmet" type="Polygon2D" parent="GuardRight/Placeholder"]
+color = Color(0.55, 0.57, 0.6, 1)
+polygon = PackedVector2Array(-8, -60, 8, -60, 8, -54, -8, -54)
+
+[node name="Spear" type="Polygon2D" parent="GuardRight/Placeholder"]
+color = Color(0.4, 0.28, 0.16, 1)
+polygon = PackedVector2Array(16, -70, 18, -70, 18, 0, 16, 0)

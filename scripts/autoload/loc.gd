@@ -80,8 +80,32 @@ func t(key: String, params: Dictionary = {}) -> String:
 	return text.format(params) if not params.is_empty() else text
 
 
+## amount is in bronze. Gives "1 Gold 20 Silver 5 Bronze" (zero piles are skipped), or the short "1G 20S 5B" form.
+func coins(amount: int, short := false) -> String:
+	var parts := GameState.split_coins(amount)
+	var suffix := "_short" if short else "_fmt"
+	var pieces: PackedStringArray = []
+	if parts.x > 0:
+		pieces.append(t("coin_gold" + suffix, {"amount": parts.x}))
+	if parts.y > 0:
+		pieces.append(t("coin_silver" + suffix, {"amount": parts.y}))
+	if parts.z > 0 or pieces.is_empty():
+		pieces.append(t("coin_bronze" + suffix, {"amount": parts.z}))
+	return " ".join(pieces)
+
+
+## Short coin text, used by the save slot cards.
 func gold(amount: int) -> String:
-	return t("gold_fmt", {"amount": amount})
+	return coins(amount, true)
+
+
+## Character part name (hair, hat, ...) in the current language. Unknown parts keep their folder name.
+func part_name(part: String) -> String:
+	var key := "part_%s" % part
+	var text := _lookup(current, key)
+	if text.is_empty():
+		text = _lookup(FALLBACK, key)
+	return part if text.is_empty() else text
 
 
 func _lookup(code: String, key: String) -> String:

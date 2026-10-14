@@ -104,7 +104,7 @@ func _rebuild_part_rows() -> void:
 		var pool := NpcLibrary.files(part, _appearance.gender, _kind)
 		var row := HBoxContainer.new()
 		var label := Label.new()
-		label.text = part
+		label.text = Loc.part_name(part)
 		label.custom_minimum_size = Vector2(PART_LABEL_WIDTH, 0)
 		label.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 		row.add_child(label)
@@ -158,7 +158,7 @@ func _refresh_info() -> void:
 			continue
 		var count := NpcLibrary.count(part, _kind)
 		total += count
-		chunks.append("%s %d" % [part, count])
+		chunks.append("%s %d" % [Loc.part_name(part), count])
 	var text := Loc.t("npc_assets_report", {"report": ", ".join(chunks)})
 	if total == 0:
 		text += "\n" + Loc.t("npc_no_assets", {"path": NpcLibrary.root(_kind)})

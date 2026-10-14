@@ -6,6 +6,11 @@ signal day_continue_pressed
 signal debt_confirmed(amount: int)
 signal save_requested
 signal open_requested
+signal collector_requested
+signal collector_left
+signal collector_event(kind: StringName)
+
+enum CollectorMode { MENU, PAY, BORROW }
 
 const FONT_SIZE := Ui.FONT_SIZE
 
@@ -17,20 +22,37 @@ var _toast: Label
 var _serve_button: Button
 var _day_panel: PanelContainer
 var _day_text: Label
+var _wallet_label: Label
 var _shop_box: GridContainer
+var _exchange_title: Label
+var _exchange_box: GridContainer
 var _continue_button: Button
 var _debt_panel: PanelContainer
 var _debt_text: Label
 var _debt_amount: Label
 var _debt_slider: HSlider
 var _pay_button: Button
+var _debt_cancel_button: Button
+var _collector_menu: VBoxContainer
+var _collector_amount_box: VBoxContainer
+var _menu_pay_button: Button
+var _menu_take_button: Button
+var _menu_leave_button: Button
 var _opening_panel: PanelContainer
 var _opening_title: Label
 var _opening_text: Label
 var _opening_feedback: Label
 var _save_button: Button
+var _upgrades_button: Button
+var _collector_button: Button
 var _open_button: Button
 var _toast_tween: Tween
+var _opening_slot := 1
+var _shop_from_opening := false
+var _collector_forced := false
+var _collector_mode := CollectorMode.MENU
+
+const EXCHANGES: Array[StringName] = [&"bronze_to_silver", &"silver_to_gold", &"silver_to_bronze", &"gold_to_silver"]
 
 
 func _ready() -> void:
@@ -66,17 +88,13 @@ func _ready() -> void:
 func _process(_delta: float) -> void:
 	_status.text = Loc.t("hud_status", {
 		"month": GameState.month,
-		"week": GameState.week,
-		"weeks": GameState.WEEKS_PER_MONTH,
 		"day": GameState.day,
-		"days": GameState.DAYS_PER_WEEK,
-		"money": Loc.gold(GameState.money),
-		"debt": Loc.gold(GameState.month_debt),
-		"earned": Loc.gold(GameState.week_earned),
-		"target": Loc.gold(GameState.weekly_target),
+		"days": GameState.DAYS_PER_MONTH,
+		"wallet": _wallet_text(),
+		"debt": Loc.coins(GameState.month_debt),
 	})
 	var glass_parts: PackedStringArray = []
-	for type in GameState.GLASS_TYPES:
+	for type in GameState.available_glass_types():
 		glass_parts.append(Loc.t("hud_glass_count", {"name": Loc.t("glass_%s" % type), "count": GameState.glass_count(type)}))
 	_status2.text = Loc.t("hud_status2", {
 		"glasses": "  ".join(glass_parts),
@@ -111,21 +129,12 @@ func toast(text: String, seconds := 2.0) -> void:
 
 func show_opening(slot: int) -> void:
 	_serve_button.visible = false
-	_opening_title.text = Loc.t("opening_title", {
-		"day": GameState.day,
-		"days": GameState.DAYS_PER_WEEK,
-		"week": GameState.week,
-		"weeks": GameState.WEEKS_PER_MONTH,
-		"month": GameState.month,
-	})
-	_opening_text.text = Loc.t("opening_info", {
-		"money": Loc.gold(GameState.money),
-		"debt": Loc.gold(GameState.month_debt),
-		"earned": Loc.gold(GameState.week_earned),
-		"target": Loc.gold(GameState.weekly_target),
-		"slot": slot,
-	})
-	_opening_feedback.text = ""
+	_opening_slot = slot
+	_shop_from_opening = false
+	_collector_forced = false
+	_day_panel.visible = false
+	_debt_panel.visible = false
+	_refresh_opening()
 	_opening_panel.visible = true
 
 
@@ -139,19 +148,18 @@ func set_opening_feedback(text: String) -> void:
 
 func show_day_end(summary: Dictionary) -> void:
 	_serve_button.visible = false
+	_shop_from_opening = false
+	_continue_button.text = Loc.t("btn_continue")
 	var text := Loc.t("day_end_summary", {
-		"earned": Loc.gold(int(summary["earned"])),
-		"week_earned": Loc.gold(int(summary["week_earned"])),
-		"target": Loc.gold(int(summary["weekly_target"])),
+		"earned": Loc.coins(int(summary.get("earned", 0))),
+		"month_earned": Loc.coins(int(summary.get("month_earned", GameState.month_earned))),
 		"trust": GameState.trust,
 		"favor": GameState.favor,
 	})
-	if summary["week_over"]:
-		if summary["target_met"]:
-			text += "\n" + Loc.t("day_end_target_met")
-		else:
-			text += "\n" + Loc.t("day_end_target_missed", {"penalty": Loc.gold(int(summary["penalty"]))})
-		text += "\n" + Loc.t("day_end_collector_next")
+	if bool(summary.get("no_glasses", false)):
+		text += "\n" + Loc.t("day_end_no_glasses")
+	if bool(summary.get("month_over", false)):
+		text += "\n" + Loc.t("day_end_month_over", {"required": Loc.coins(int(summary.get("required", GameState.required_left())))})
 	if GameState.fewer_customers_days > 0:
 		text += "\n" + Loc.t("day_end_bad_rep", {"days": GameState.fewer_customers_days})
 	_day_text.text = text
@@ -159,25 +167,9 @@ func show_day_end(summary: Dictionary) -> void:
 	_day_panel.visible = true
 
 
-func show_collector(info: Dictionary) -> void:
-	var max_pay := mini(int(info["money"]), int(info["month_debt"]))
-	var forced: bool = info["forced"]
-	_debt_slider.min_value = 0
-	_debt_slider.max_value = max_pay
-	_debt_slider.step = 1
-	_debt_slider.value = max_pay if forced else clampi(int(info["suggested"]), 0, max_pay)
-	_debt_slider.editable = not forced
-	var text := Loc.t("collector_text", {
-		"debt": Loc.gold(int(info["month_debt"])),
-		"money": Loc.gold(int(info["money"])),
-	})
-	if forced:
-		text += "\n" + Loc.t("collector_forced", {"interest": roundi(GameState.UNPAID_INTEREST * 100.0)})
-	else:
-		text += "\n" + Loc.t("collector_suggested", {"amount": Loc.gold(int(info["suggested"]))})
-	_debt_text.text = text
-	_on_debt_slider_changed(_debt_slider.value)
-	_debt_panel.visible = true
+## Month end: the collector wants his money. The player can only pay (at least the required part).
+func show_collector() -> void:
+	_open_collector(true)
 
 
 func hide_day_panels() -> void:
@@ -189,10 +181,17 @@ func hide_day_panels() -> void:
 
 func _apply_static_texts() -> void:
 	_serve_button.text = Loc.t("btn_serve")
-	_continue_button.text = Loc.t("btn_continue")
-	_pay_button.text = Loc.t("btn_pay")
+	_continue_button.text = Loc.t("btn_back" if _shop_from_opening else "btn_continue")
+	_pay_button.text = Loc.t("btn_take" if _collector_mode == CollectorMode.BORROW else "btn_pay")
+	_debt_cancel_button.text = Loc.t("btn_back")
+	_menu_pay_button.text = Loc.t("btn_pay_debt")
+	_menu_take_button.text = Loc.t("btn_take_debt")
+	_menu_leave_button.text = Loc.t("btn_leave")
 	_save_button.text = Loc.t("btn_save_game")
+	_upgrades_button.text = Loc.t("btn_upgrades")
+	_collector_button.text = Loc.t("btn_go_collector")
 	_open_button.text = Loc.t("btn_open_shop")
+	_exchange_title.text = Loc.t("shop_exchange_title")
 
 
 func _make_label(parent: Control, pos: Vector2, label_size: Vector2) -> Label:
@@ -225,6 +224,12 @@ func _build_opening_panel(root: Control) -> void:
 	_save_button = Ui.button("")
 	_save_button.pressed.connect(func() -> void: save_requested.emit())
 	box.add_child(_save_button)
+	_upgrades_button = Ui.button("")
+	_upgrades_button.pressed.connect(_on_upgrades_pressed)
+	box.add_child(_upgrades_button)
+	_collector_button = Ui.button("")
+	_collector_button.pressed.connect(_on_collector_pressed)
+	box.add_child(_collector_button)
 	_open_button = Ui.button("")
 	_open_button.pressed.connect(func() -> void: open_requested.emit())
 	box.add_child(_open_button)
@@ -232,7 +237,7 @@ func _build_opening_panel(root: Control) -> void:
 
 func _build_day_panel(root: Control) -> void:
 	_day_panel = PanelContainer.new()
-	_day_panel.position = Vector2(90, 16)
+	_day_panel.position = Vector2(90, 8)
 	_day_panel.custom_minimum_size = Vector2(460, 0)
 	_day_panel.visible = false
 	root.add_child(_day_panel)
@@ -240,9 +245,16 @@ func _build_day_panel(root: Control) -> void:
 	_day_panel.add_child(box)
 	_day_text = Ui.label("")
 	box.add_child(_day_text)
+	_wallet_label = Ui.label("")
+	box.add_child(_wallet_label)
 	_shop_box = GridContainer.new()
 	_shop_box.columns = 2
 	box.add_child(_shop_box)
+	_exchange_title = Ui.label("")
+	box.add_child(_exchange_title)
+	_exchange_box = GridContainer.new()
+	_exchange_box.columns = 2
+	box.add_child(_exchange_box)
 	_continue_button = Ui.button("")
 	_continue_button.pressed.connect(_on_continue_pressed)
 	box.add_child(_continue_button)
@@ -250,7 +262,7 @@ func _build_day_panel(root: Control) -> void:
 
 func _build_debt_panel(root: Control) -> void:
 	_debt_panel = PanelContainer.new()
-	_debt_panel.position = Vector2(150, 70)
+	_debt_panel.position = Vector2(150, 186)
 	_debt_panel.custom_minimum_size = Vector2(340, 0)
 	_debt_panel.visible = false
 	root.add_child(_debt_panel)
@@ -258,15 +270,35 @@ func _build_debt_panel(root: Control) -> void:
 	_debt_panel.add_child(box)
 	_debt_text = Ui.label("")
 	box.add_child(_debt_text)
+	_collector_menu = VBoxContainer.new()
+	box.add_child(_collector_menu)
+	_menu_pay_button = Ui.button("")
+	_menu_pay_button.pressed.connect(_on_menu_pay_pressed)
+	_collector_menu.add_child(_menu_pay_button)
+	_menu_take_button = Ui.button("")
+	_menu_take_button.pressed.connect(_show_collector_borrow)
+	_collector_menu.add_child(_menu_take_button)
+	_menu_leave_button = Ui.button("")
+	_menu_leave_button.pressed.connect(_on_collector_leave_pressed)
+	_collector_menu.add_child(_menu_leave_button)
+	_collector_amount_box = VBoxContainer.new()
+	box.add_child(_collector_amount_box)
 	_debt_slider = HSlider.new()
 	_debt_slider.custom_minimum_size = Vector2(300, 16)
 	_debt_slider.value_changed.connect(_on_debt_slider_changed)
-	box.add_child(_debt_slider)
+	_collector_amount_box.add_child(_debt_slider)
 	_debt_amount = Ui.label("")
-	box.add_child(_debt_amount)
+	_collector_amount_box.add_child(_debt_amount)
+	var amount_buttons := HBoxContainer.new()
+	_collector_amount_box.add_child(amount_buttons)
 	_pay_button = Ui.button("")
+	_pay_button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	_pay_button.pressed.connect(_on_debt_confirm_pressed)
-	box.add_child(_pay_button)
+	amount_buttons.add_child(_pay_button)
+	_debt_cancel_button = Ui.button("")
+	_debt_cancel_button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_debt_cancel_button.pressed.connect(_on_debt_cancel_pressed)
+	amount_buttons.add_child(_debt_cancel_button)
 
 
 func _add_shop_button(text: String, disabled: bool, handler: Callable) -> void:
@@ -276,18 +308,33 @@ func _add_shop_button(text: String, disabled: bool, handler: Callable) -> void:
 	_shop_box.add_child(button)
 
 
+func _add_exchange_button(kind: StringName) -> void:
+	var button := Ui.button(
+		Loc.t("exchange_%s" % kind, {"count": GameState.exchange_amount(kind)}),
+		Vector2(220, 0)
+	)
+	button.disabled = GameState.exchange_amount(kind) <= 0
+	button.pressed.connect(_on_exchange_pressed.bind(kind))
+	_exchange_box.add_child(button)
+
+
 func _rebuild_shop() -> void:
 	for child in _shop_box.get_children():
+		_shop_box.remove_child(child)
 		child.queue_free()
-	for type in GameState.GLASS_TYPES:
+	for child in _exchange_box.get_children():
+		_exchange_box.remove_child(child)
+		child.queue_free()
+	_wallet_label.text = Loc.t("shop_wallet", {"wallet": _wallet_text()})
+	for type in GameState.available_glass_types():
 		var price := GameState.glass_price(type)
 		_add_shop_button(
 			Loc.t("shop_buy_glass", {
 				"name": Loc.t("glass_%s" % type),
 				"count": GameState.glass_count(type),
-				"price": Loc.gold(price),
+				"price": Loc.coins(price),
 			}),
-			GameState.money < price,
+			not GameState.can_afford(price),
 			_on_glass_pressed.bind(type)
 		)
 	for id in GameState.UPGRADES:
@@ -301,8 +348,8 @@ func _rebuild_shop() -> void:
 		else:
 			var cost := GameState.upgrade_cost(id)
 			_add_shop_button(
-				Loc.t("shop_upgrade", {"name": upgrade_name, "level": GameState.level(id), "price": Loc.gold(cost)}),
-				GameState.money < cost,
+				Loc.t("shop_upgrade", {"name": upgrade_name, "level": GameState.level(id), "price": Loc.coins(cost)}),
+				not GameState.can_afford(cost),
 				_on_upgrade_pressed.bind(id)
 			)
 	for id in DrinkDB.ids():
@@ -310,10 +357,12 @@ func _rebuild_shop() -> void:
 			continue
 		var drink := DrinkDB.get_drink(id)
 		_add_shop_button(
-			Loc.t("shop_unlock", {"name": drink.name_text(), "price": Loc.gold(drink.unlock_cost)}),
-			GameState.money < drink.unlock_cost,
+			Loc.t("shop_unlock", {"name": drink.name_text(), "price": Loc.coins(drink.unlock_cost)}),
+			not GameState.can_afford(drink.unlock_cost),
 			_on_unlock_pressed.bind(id)
 		)
+	for kind in EXCHANGES:
+		_add_exchange_button(kind)
 
 
 func _on_glass_pressed(type: StringName) -> void:
@@ -327,19 +376,184 @@ func _on_upgrade_pressed(id: StringName) -> void:
 
 
 func _on_unlock_pressed(id: StringName) -> void:
-	GameState.unlock_drink(id)
+	if GameState.unlock_drink(id):
+		var glass := DrinkDB.get_drink(id).preferred_glass
+		toast(Loc.t("toast_glass_promo", {
+			"count": GameState.UNLOCK_PROMO_GLASSES,
+			"name": Loc.t("glass_%s" % glass),
+		}), 3.0)
+	_rebuild_shop()
+
+
+func _on_exchange_pressed(kind: StringName) -> void:
+	GameState.exchange(kind)
 	_rebuild_shop()
 
 
 func _on_continue_pressed() -> void:
 	_day_panel.visible = false
+	if _shop_from_opening:
+		_shop_from_opening = false
+		_refresh_opening()
+		_opening_panel.visible = true
+		return
 	day_continue_pressed.emit()
 
 
+func _on_upgrades_pressed() -> void:
+	_shop_from_opening = true
+	_opening_panel.visible = false
+	_continue_button.text = Loc.t("btn_back")
+	_day_text.text = Loc.t("shop_title")
+	_rebuild_shop()
+	_day_panel.visible = true
+
+
+# --- debt collector ----------------------------------------------------------
+
+func _on_collector_pressed() -> void:
+	collector_requested.emit()
+	_open_collector(false)
+
+
+func _open_collector(forced: bool) -> void:
+	_collector_forced = forced
+	_opening_panel.visible = false
+	_day_panel.visible = false
+	if forced:
+		_show_collector_pay()
+	else:
+		_show_collector_menu()
+	_debt_panel.visible = true
+
+
+func _debt_body() -> String:
+	return Loc.t("debt_body", {
+		"debt": Loc.coins(GameState.month_debt),
+		"money": Loc.coins(GameState.money),
+		"required": Loc.coins(GameState.required_left()),
+	})
+
+
+func _show_collector_menu() -> void:
+	_collector_mode = CollectorMode.MENU
+	_debt_text.text = Loc.t("collector_title") + "\n" + _debt_body()
+	_collector_menu.visible = true
+	_collector_amount_box.visible = false
+
+
+func _on_menu_pay_pressed() -> void:
+	if GameState.month_debt <= 0:
+		collector_event.emit(&"no_debt")
+	elif GameState.max_payment() <= 0:
+		collector_event.emit(&"broke")
+	else:
+		_show_collector_pay()
+
+
+func _show_collector_pay() -> void:
+	_collector_mode = CollectorMode.PAY
+	var info := GameState.collector_info(_collector_forced)
+	var min_pay := int(info["min_pay"])
+	var max_pay := maxi(int(info["max_pay"]), min_pay)
+	_debt_slider.min_value = min_pay
+	_debt_slider.max_value = max_pay
+	_debt_slider.step = 100 if max_pay - min_pay >= 1000 else 1
+	_debt_slider.editable = max_pay > min_pay
+	_debt_slider.value = clampi(int(info["required"]), min_pay, max_pay)
+	var text := Loc.t("collector_title" if _collector_forced else "paydebt_title") + "\n" + _debt_body()
+	if _collector_forced:
+		text += "\n" + Loc.t("collector_forced", {"interest": roundi(GameState.UNPAID_INTEREST * 100.0)})
+	else:
+		text += "\n" + Loc.t("paydebt_hint")
+	_debt_text.text = text
+	_pay_button.text = Loc.t("btn_pay")
+	_debt_cancel_button.visible = not _collector_forced
+	_collector_menu.visible = false
+	_collector_amount_box.visible = true
+	_on_debt_slider_changed(_debt_slider.value)
+
+
+func _show_collector_borrow() -> void:
+	_collector_mode = CollectorMode.BORROW
+	_debt_slider.min_value = GameState.BORROW_MIN
+	_debt_slider.max_value = GameState.BORROW_MAX
+	_debt_slider.step = GameState.BORROW_STEP
+	_debt_slider.editable = true
+	var suggested := ceili(GameState.cheapest_glass_price() / float(GameState.BORROW_STEP)) * GameState.BORROW_STEP
+	_debt_slider.value = clampi(suggested, GameState.BORROW_MIN, GameState.BORROW_MAX)
+	_debt_text.text = Loc.t("borrow_title") + "\n" + _debt_body()
+	_debt_text.text += "\n" + Loc.t("borrow_hint", {"fee": roundi(GameState.BORROW_FEE * 100.0)})
+	_pay_button.text = Loc.t("btn_take")
+	_debt_cancel_button.visible = true
+	_collector_menu.visible = false
+	_collector_amount_box.visible = true
+	_on_debt_slider_changed(_debt_slider.value)
+
+
 func _on_debt_slider_changed(value: float) -> void:
-	_debt_amount.text = Loc.t("collector_pay_label", {"amount": Loc.gold(int(value))})
+	if _collector_mode == CollectorMode.BORROW:
+		_debt_amount.text = Loc.t("collector_borrow_label", {
+			"amount": Loc.coins(int(value)),
+			"added": Loc.coins(GameState.borrow_debt_added(int(value))),
+		})
+	else:
+		_debt_amount.text = Loc.t("collector_pay_label", {"amount": Loc.coins(int(value))})
 
 
 func _on_debt_confirm_pressed() -> void:
+	var amount := int(_debt_slider.value)
+	if _collector_mode == CollectorMode.BORROW:
+		var taken := GameState.borrow(amount)
+		if taken > 0:
+			toast(Loc.t("toast_borrowed", {"amount": Loc.coins(taken), "debt": Loc.coins(GameState.month_debt)}), 3.0)
+			collector_event.emit(&"borrowed")
+		_show_collector_menu()
+		return
+	if _collector_forced:
+		_debt_panel.visible = false
+		debt_confirmed.emit(amount)
+		return
+	var paid := GameState.pay_debt(amount)
+	if paid > 0:
+		toast(Loc.t("toast_paid", {"paid": Loc.coins(paid), "debt": Loc.coins(GameState.month_debt)}), 3.0)
+		collector_event.emit(&"paid")
+	_show_collector_menu()
+
+
+func _on_debt_cancel_pressed() -> void:
+	_show_collector_menu()
+
+
+func _on_collector_leave_pressed() -> void:
 	_debt_panel.visible = false
-	debt_confirmed.emit(int(_debt_slider.value))
+	collector_left.emit()
+
+
+func _wallet_text() -> String:
+	return Loc.t("wallet_fmt", {"gold": GameState.gold, "silver": GameState.silver, "bronze": GameState.bronze})
+
+
+func _refresh_opening() -> void:
+	_opening_title.text = Loc.t("opening_title", {
+		"day": GameState.day,
+		"days": GameState.DAYS_PER_MONTH,
+		"month": GameState.month,
+	})
+	_opening_text.text = Loc.t("opening_info", {
+		"wallet": _wallet_text(),
+		"debt": Loc.coins(GameState.month_debt),
+		"required": Loc.coins(GameState.required_left()),
+		"slot": _opening_slot,
+	})
+	_open_button.disabled = not GameState.has_glasses()
+	_opening_feedback.text = _glass_hint()
+
+
+## Shown on the opening screen while the player has no glass at all.
+func _glass_hint() -> String:
+	if GameState.has_glasses():
+		return ""
+	if GameState.can_afford(GameState.cheapest_glass_price()):
+		return Loc.t("opening_need_glass")
+	return Loc.t("opening_need_money")

@@ -1,0 +1,48 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" uid="uid://coa0x1jsqjgk0" path="res://scripts/objects/glass.gd" id="1_glass"]
+[ext_resource type="Script" uid="uid://c5l70c8xymhll" path="res://scripts/objects/liquid_visual.gd" id="2_liquid"]
+[ext_resource type="Texture2D" uid="uid://bg1f0776twvbo" path="res://assets/objects/glassas/beer mug-beer mug.png" id="3_mug"]
+
+[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_mug"]
+friction = 0.7
+bounce = 0.05
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_body"]
+size = Vector2(47, 51)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_grab"]
+size = Vector2(67, 55)
+
+[node name="BeerMug" type="RigidBody2D" groups=["glasses"]]
+collision_layer = 2
+collision_mask = 3
+mass = 0.6
+physics_material_override = SubResource("PhysicsMaterial_mug")
+can_sleep = false
+continuous_cd = 1
+linear_damp = 0.4
+angular_damp = 1.5
+script = ExtResource("1_glass")
+glass_type = &"mug"
+
+[node name="Liquid" type="Node2D" parent="."]
+script = ExtResource("2_liquid")
+
+[node name="Sprite" type="Sprite2D" parent="."]
+position = Vector2(-27, -37)
+texture = ExtResource("3_mug")
+centered = false
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(0.5, 0.5)
+shape = SubResource("RectangleShape2D_body")
+
+[node name="GrabZone" type="Area2D" parent="." groups=["glass_grab"]]
+collision_layer = 8
+collision_mask = 0
+monitoring = false
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="GrabZone"]
+position = Vector2(0.5, -1.5)
+shape = SubResource("RectangleShape2D_grab")

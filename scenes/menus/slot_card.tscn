@@ -1,27 +1,28 @@
-[gd_scene format=3]
+[gd_scene format=3 uid="uid://bc6r7r116iui4"]
 
-[ext_resource type="Script" path="res://scripts/menus/slot_card.gd" id="1_script"]
+[ext_resource type="Script" uid="uid://di6a61imdjlrw" path="res://scripts/menus/slot_card.gd" id="1_script"]
 [ext_resource type="PackedScene" path="res://scenes/ui/nine_patch_button.tscn" id="2_button"]
 
-[node name="SlotCard" type="VBoxContainer"]
+[node name="SlotCard" type="VBoxContainer" unique_id=1999342301]
 custom_minimum_size = Vector2(180, 0)
 size_flags_horizontal = 3
 theme_override_constants/separation = 4
 script = ExtResource("1_script")
 
-[node name="ManualButton" parent="." instance=ExtResource("2_button")]
+[node name="ManualButton" parent="." unique_id=1164021230 instance=ExtResource("2_button")]
 custom_minimum_size = Vector2(0, 130)
 layout_mode = 2
 autowrap_mode = 3
 
-[node name="AutoButton" parent="." instance=ExtResource("2_button")]
+[node name="AutoButton" parent="." unique_id=1821516091 instance=ExtResource("2_button")]
 custom_minimum_size = Vector2(0, 52)
 layout_mode = 2
 theme_override_font_sizes/font_size = 8
 autowrap_mode = 3
 
-[node name="DeleteButton" parent="." instance=ExtResource("2_button")]
+[node name="DeleteButton" parent="." unique_id=1890582387 instance=ExtResource("2_button")]
 custom_minimum_size = Vector2(0, 20)
 layout_mode = 2
 theme_override_font_sizes/font_size = 8
+text = "slot_delete"
 text_key = "slot_delete"

@@ -1,12 +1,10 @@
 [gd_scene format=3]
 
 [ext_resource type="Script" path="res://scripts/objects/pour_station.gd" id="1_station"]
+[ext_resource type="Script" path="res://scripts/objects/bottle.gd" id="2_bottle"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_handle"]
-size = Vector2(16, 26)
-
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_pour"]
-size = Vector2(22, 80)
+size = Vector2(18, 50)
 
 [node name="PourStation" type="Area2D" groups=["interactable"]]
 collision_layer = 8
@@ -14,27 +12,19 @@ collision_mask = 0
 monitoring = false
 script = ExtResource("1_station")
 
-[node name="Bottle" type="Polygon2D" parent="."]
-color = Color(0.8, 0.6, 0.2, 1)
-polygon = PackedVector2Array(-7, -26, 7, -26, 7, -8, 3, -4, 3, 0, -3, 0, -3, -4, -7, -8)
-
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-position = Vector2(0, -13)
+position = Vector2(0, -24)
 shape = SubResource("RectangleShape2D_handle")
 
-[node name="PourArea" type="Area2D" parent="."]
-collision_layer = 0
-collision_mask = 2
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="PourArea"]
-position = Vector2(0, 40)
-shape = SubResource("RectangleShape2D_pour")
+[node name="Bottle" type="Node2D" parent="."]
+z_index = 4
+script = ExtResource("2_bottle")
 
 [node name="NameLabel" type="Label" parent="."]
 offset_left = -30.0
-offset_top = -40.0
+offset_top = 3.0
 offset_right = 30.0
-offset_bottom = -27.0
+offset_bottom = 16.0
 theme_override_font_sizes/font_size = 8
 horizontal_alignment = 1
 mouse_filter = 2
